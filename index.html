@@ -1,32 +1,50 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-  </head>
-  <body>
-    <main>
-      <section class="display_container">
-        <div class="history_container col_reverse">
-          <p id="last_operation"></p>
-        </div>
-        <div class="total_container col_reverse">
-          <p id="total">0</p>
-        </div>
-      </section>
-      <section class="buttons_container">
-        <div id="numeral_container">
-          <div class="stateToggle">
 
-          </div>
-          <div id="digits">
+<head>
+  <meta charset="UTF-8" />
+</head>
 
-          </div>
+<body>
+  <main>
+    <section class="display_container">
+      <div class="history_container col_reverse">
+        <p id="last_operation"></p>
+      </div>
+      <div class="total_container col_reverse">
+        <p id="total">0</p>
+      </div>
+    </section>
+    <section class="buttons_container">
+      <div id="numeral_container">
+        <div id="digits">
+          <button class="aux button" id="resetButton">AC</button>
+          <button class="aux button">+/-</button>
+          <button class="aux button">%</button>
+          <button class="numeral button">7</button>
+          <button class="numeral button">8</button>
+          <button class="numeral button">9</button>
+          <button class="numeral button">4</button>
+          <button class="numeral button">5</button>
+          <button class="numeral button">6</button>
+          <button class="numeral button">1</button>
+          <button class="numeral button">2</button>
+          <button class="numeral button">3</button>
+          <button class="numeral button"></button>
+          <button class="numeral button">0</button>
+          <button class="numeral button">.</button>
         </div>
-        <div id="operations_container">
-          
-        </div>
-      </section>
-    </main>
-    <script type="module" src="/src/renderer.ts"></script>
-  </body>
+      </div>
+      <div id="operators_container">
+        <button class="operator button">÷</button>
+        <button class="operator button">x</button>
+        <button class="operator button">-</button>
+        <button class="operator button">+</button>
+        <button class="operator button">=</button>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="/src/renderer.ts"></script>
+</body>
+
 </html>

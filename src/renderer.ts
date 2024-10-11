@@ -31,30 +31,77 @@ import { digits, statusList } from './resources/configs';
 
 console.log('👋 This message is being logged by "renderer.ts", included via Vite');
 
-const total_state = document.getElementById("total");
+const total_value = document.getElementById("total");
 const state_element = document.getElementById("stateToggle");
-const digits_element = document.getElementById("digits");
+const digits_container = document.getElementById("digits");
+const buttons = document.querySelectorAll(".button");
+let reset_button = document.getElementById("resetButton");
+let delete_button = document.getElementById("delButton");
+const total_digit = 0;
 
-let status = statusList["STARTED"];
+let status = statusList.STARTED;
+
+buttons.forEach(button => {
+    button.addEventListener("click", () => {
+        addValue(button);
+    })
+});
+
+const addValue = (button: Element) => {
+    if (status === statusList.STARTED || status === statusList.RESULT) {
+        total_value.innerHTML = button.innerHTML;
+        status = statusList.TIPING;
+    } else {
+        total_value.innerHTML += button.innerHTML;
+    }
+
+    render_touglest_elements();
+}
+
+const delKey = () => {
+    if (total_value.innerHTML.length > 1) {
+        console.log(total_value.innerHTML.length)
+        total_value.innerHTML = total_value.innerHTML.substring(0, total_value.lang.length - 1);
+    } else {
+        total_value.innerHTML = "0";
+        status = statusList.STARTED;
+    }
+};
+
+const reset = () => {
+    total_value.innerHTML = "0";
+    status = statusList.STARTED;
+};
+
+const render_touglest_elements = () => {
+    if (status != statusList.TIPING && !reset_button) {
+        reset_button = create_element("button", ["aux", "button"], "reset_button");
+        reset_button.addEventListener("click", reset);
+        reset_button.innerHTML = "AC";
+        replace_element(reset_button, delete_button, digits_container);
+    } else if (status == statusList.TIPING) {
+        delete_button = create_element("button", ["aux", "button"], "delete_button");
+        delete_button.addEventListener("click", delKey);
+        reset_button.innerHTML = "DEL";
+        replace_element(delete_button, reset_button, digits_container);
+    }
+}
+
+const replace_element = (newElement: HTMLElement, replacedElement: HTMLElement, container: HTMLElement) => {
+    container.replaceChild(newElement, replacedElement);
+};
+
+const create_element = (type: string, classes: string[], id: string) => {
+    const new_element = document.createElement(type);
+    classes.map(cls => new_element.className += " " + cls);
+
+    new_element.id = id;
+
+    return new_element;
+};
 
 const render_data = () => {
-    digits.forEach((digit) => {
-        const button = document.createElement("button");
-        button.classList.add("numeral_button");
-        button.innerText = digit.toString();
-
-        button.addEventListener("click", () => {
-            if (status === statusList.STARTED) {
-                total_state.innerHTML = digit.toString();
-                status = statusList.TIPING;
-                return;
-            };
-            total_state.innerHTML += digit.toString();
-            return;
-        });
-
-        digits_element.appendChild(button);
-    });
+    reset_button.addEventListener("click", reset);
 };
 
 render_data();
