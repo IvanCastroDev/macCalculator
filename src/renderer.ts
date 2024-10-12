@@ -27,17 +27,17 @@
  */
 
 import './index.css';
-import { digits, statusList } from './resources/configs';
+import { statusList } from './resources/configs';
 
 console.log('👋 This message is being logged by "renderer.ts", included via Vite');
 
 const total_value = document.getElementById("total");
-const state_element = document.getElementById("stateToggle");
 const digits_container = document.getElementById("digits");
 const buttons = document.querySelectorAll(".button");
 let reset_button = document.getElementById("resetButton");
 let delete_button = document.getElementById("delButton");
-const total_digit = 0;
+const equal_button = document.getElementById("equalButton");
+const last_operation_display = document.getElementById("last_operation");
 
 let status = statusList.STARTED;
 
@@ -48,42 +48,41 @@ buttons.forEach(button => {
 });
 
 const addValue = (button: Element) => {
-    if (status === statusList.STARTED || status === statusList.RESULT) {
-        total_value.innerHTML = button.innerHTML;
+    if ((status === statusList.STARTED || status === statusList.RESULT) && !button.className.includes("operator")) {
+        total_value.textContent = button.textContent;
         status = statusList.TIPING;
     } else {
-        total_value.innerHTML += button.innerHTML;
+        total_value.textContent += button.textContent;
     }
 
     render_touglest_elements();
 }
 
 const delKey = () => {
-    if (total_value.innerHTML.length > 1) {
-        console.log(total_value.innerHTML.length)
-        total_value.innerHTML = total_value.innerHTML.substring(0, total_value.lang.length - 1);
+    if (total_value.textContent.length > 1) {
+        total_value.textContent = total_value.textContent.substring(0, total_value.textContent.length - 1);
     } else {
-        total_value.innerHTML = "0";
+        total_value.textContent = "0";
         status = statusList.STARTED;
+        render_touglest_elements();
     }
 };
 
 const reset = () => {
-    total_value.innerHTML = "0";
+    total_value.textContent = "0";
+    last_operation_display.textContent = "";
     status = statusList.STARTED;
 };
 
 const render_touglest_elements = () => {
     if (status != statusList.TIPING && !reset_button) {
-        reset_button = create_element("button", ["aux", "button"], "reset_button");
-        reset_button.addEventListener("click", reset);
-        reset_button.innerHTML = "AC";
+        reset_button = create_element("button", ["aux"], "reset_button", "AC", "click", reset);
         replace_element(reset_button, delete_button, digits_container);
-    } else if (status == statusList.TIPING) {
-        delete_button = create_element("button", ["aux", "button"], "delete_button");
-        delete_button.addEventListener("click", delKey);
-        reset_button.innerHTML = "DEL";
+        delete_button = null;
+    } else if (status == statusList.TIPING && !delete_button) {
+        delete_button = create_element("button", ["aux"], "delete_button", "«", "click", delKey);
         replace_element(delete_button, reset_button, digits_container);
+        reset_button = null;
     }
 }
 
@@ -91,17 +90,32 @@ const replace_element = (newElement: HTMLElement, replacedElement: HTMLElement, 
     container.replaceChild(newElement, replacedElement);
 };
 
-const create_element = (type: string, classes: string[], id: string) => {
+const create_element = (type: string, classes: string[], id: string, textContent: string, eventCallback: string, callback: () => void) => {
     const new_element = document.createElement(type);
     classes.map(cls => new_element.className += " " + cls);
 
-    new_element.id = id;
+    new_element.id = id ? id : undefined;
+
+    new_element.textContent = textContent;
+    new_element.addEventListener(eventCallback, callback);
 
     return new_element;
 };
 
+const getEqual = () => {
+    if (status === statusList.STARTED || status === statusList.RESULT)
+        return;
+     
+    let aux = total_value.textContent;
+    total_value.textContent = eval(total_value.textContent);
+    last_operation_display.textContent = aux;
+    status = statusList.RESULT;
+    render_touglest_elements();
+};
+
 const render_data = () => {
     reset_button.addEventListener("click", reset);
+    equal_button.addEventListener("click", getEqual);
 };
 
 render_data();
